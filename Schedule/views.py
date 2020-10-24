@@ -26,7 +26,7 @@ def schedulecreate(request, plan_id):
 def scheduleupdate(request, schedule_id):
     schedule = get_object_or_404(Schedule, pk=schedule_id)
     if request.method == 'POST':
-        form_s = ScheduleForm(request.POST)
+        form_s = ScheduleForm(request.POST, instance=schedule)
         if form_s.is_valid():
             schedule = form_s.save(commit=False)
             schedule.save()

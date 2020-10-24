@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect, redirect, HttpResponseRedirect
-from .models import Plan, Scrap
 from .forms import PlanForm
 from django.core.paginator import Paginator
+from .models import Plan, Scrap
 
 # Create your views here.
 
