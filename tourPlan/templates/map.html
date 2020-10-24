@@ -972,12 +972,12 @@ map.addControl(toolbox.getElement(), kakao.maps.ControlPosition.TOP);
         var link = StringTool.format( 'https://share.naver.com/web/shareView.nhn?url={0}&title={1}', encodeUrl, encodeTitle );
         window.open( link, 'share', 'width=500, height=500' ); 
         }
-    shareNaver( 'http://127.0.0.1:8000', 'Touring-Project');
+    shareNaver( 'http://touring-env.eba-u8mmphv2.us-west-2.elasticbeanstalk.com/', 'Touring-Project');
 </script>
 
 <div class="button">
 <input type="button" class="btn btn-success btn-lg" width=15% onclick="javascript:CopyUrlToClipboard()" name="링크 복사하기" value="링크 복사하기">
-<a href="http://127.0.0.1:8000" onclick="javascript:window.open('http://share.naver.com/web/shareView.nhn?url='+encodeURIComponent(document.URL)+'&title'+
+<a href="http://touring-env.eba-u8mmphv2.us-west-2.elasticbeanstalk.com/" onclick="javascript:window.open('http://share.naver.com/web/shareView.nhn?url='+encodeURIComponent(document.URL)+'&title'+
 encodeURIComponent(document.title), 'naversharedialog', 'menubar=no, toolbar=no, resizable=yes,scrollbars=yes,height=600, width=600');
  return false;" target = "_blank" alt="Share on Naver">
 <input type="button" class="btn btn-success btn-lg" onclick="shareNaver()" name="네이버 공유하기" value="네이버 공유하기"/></a>
@@ -987,7 +987,7 @@ encodeURIComponent(document.title), 'naversharedialog', 'menubar=no, toolbar=no,
 <script>
         function CopyUrlToClipboard() {
             var obShareUrl = document.getElementById("ShareUrl");
-            obShareUrl.value = "127.0.0.1:8000";
+            obShareUrl.value = "http://touring-env.eba-u8mmphv2.us-west-2.elasticbeanstalk.com/";
             obShareUrl.select();
             document.execCommand("copy"); 
             obShareUrl.blur();
@@ -997,7 +997,7 @@ encodeURIComponent(document.title), 'naversharedialog', 'menubar=no, toolbar=no,
 
 <br><input id="ShareUrl">
 <form id="myform">
-<input id="url" value="https://127.0.0.1:8000" style="outline-color:white"><br/>
+<input id="url" value="http://touring-env.eba-u8mmphv2.us-west-2.elasticbeanstalk.com/" style="outline-color:white"><br/>
 <br/>
 </form>
 
