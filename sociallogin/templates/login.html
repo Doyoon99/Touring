@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Touring</title>
+    <style>
+      #logo {display:block; margin:0px auto; margin-top:150px; margin-left:auto; margin-right:auto;}  
+      #social {display:block; margin:0px; margin-left:auto; margin-right:auto;}
+    </style>
+</head>
+<body>
+    {% load static %}
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript jquery='full' %}
+
+<!--로고(home)-->
+<a href="{% url 'home' %}"><img id="logo" width="50%" src="{% static '로고.png' %}"></a>
+<br><br>
+<!--facebook jsp-->    
+<script>
+  function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
+    console.log('statusChangeCallback');
+    console.log(response);                   // The current login status of the person.
+    if (response.status === 'connected') {   // Logged into your webpage and Facebook.
+      testAPI();  
+    } else {                                 // Not logged into your webpage or we are unable to tell.
+      document.getElementById('status').innerHTML = 'Please log ' +
+        'into this webpage.';
+    }
+  }
+
+
+  function checkLoginState() {               // Called when a person is finished with the Login Button.
+    FB.getLoginStatus(function(response) {   // See the onlogin handler
+      statusChangeCallback(response);
+    });
+  }
+
+
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '339369053910508',
+      cookie     : true,                     // Enable cookies to allow the server to access the session.
+      xfbml      : true,                     // Parse social plugins on this webpage.
+      version    : 'v8.0.'           // 최신버전
+    });
+
+
+    FB.getLoginStatus(function(response) {   // Called after the JS SDK has been initialized.
+      statusChangeCallback(response);        // Returns the login status.
+    });
+  };
+ 
+  function testAPI() {                      // Testing Graph API after login.  See statusChangeCallback() for when this call is made.
+    console.log('Welcome!  Fetching your information.... ');
+    FB.api('/me', function(response) {
+      console.log('Successful login for: ' + response.name);
+      document.getElementById('status').innerHTML =
+        'Thanks for logging in, ' + response.name + '!';
+    });
+  }
+
+</script>
+
+
+<!-- The JS SDK Login Button -->
+
+<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+</fb:login-button>
+
+<div id="status">
+</div>
+
+<!-- Load the JS SDK asynchronously -->
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+
+{% if user.is_authenticated %}
+<a href="/accounts/logout">로그아웃</a><br>
+{{user.username}} 님이 로그인 중
+
+{% else %}
+<br><br>
+<!--facebook--> 
+{%load socialaccount%}
+<a href="https://www.facebook.com/v8.0/dialog/oauth?
+client_id={{ 339369053910508 }}&
+redirect_uri=http://localhost:8000{% provider_login_url 'facebook' %}"> 
+<img id="social" src="{% static 'facebook_login.png' %}"></a>
+<br>
+
+<!--naver-->
+<a href="{% provider_login_url 'naver' %}"><img id="social" src="{% static 'naver_login.png' %}"></a>
+<br>
+
+<!--google-->
+<a href ="{% provider_login_url 'google' %}">
+<img id="social" src="{% static 'google.png' %}">
+</a>
+<br>
+
+{% endif %}
+
+</body>
+</html>

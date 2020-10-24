@@ -1,0 +1,1014 @@
+{% extends 'nav.html' %}
+
+
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Touring</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    {% block content %}
+    <style>
+         @font-face {
+            font-family: 'KyoboHand';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }        
+        body{font-family: "KyoboHand";}
+        .body_margin{padding-left: 30px; padding-right: 30px;}
+        .button {text-align:center;}
+        .Cal{
+            margin-bottom:10px;
+            margin-top:1%;
+            padding:auto;
+            text-align:center;
+            border:3px solid #28527A;
+            border-radius : 3%;
+            width : 49%;
+            height: 75%;
+            float:right;
+            display:table;
+        }
+        .t_input {
+            width:100px;
+        }
+        #calc{
+            table-layout: fixed;
+            width:90%;
+            height:60%;
+            margin-left:3%;
+        }
+
+        #calc th{
+            background-color:#28527A;
+            color: #FFFFFF;
+        }
+        
+        #calc tr{
+            color:#28527A;
+            text-align: center;
+        }
+        #copy_tr {
+            background-color:hsl(209, 51%, 32%);
+            color: #FFFFFF;
+            text-align:center; 
+
+        }
+        .s {
+            border:3px solid #28527A;
+            border-radius:3%;
+            float:left;
+            padding:auto;
+            margin-bottom:10px;
+            margin-right: 2%;
+        }
+        
+        .m {
+            border:3px solid #28527A;
+            border-radius:3%;
+            margin-left:2%;
+            margin-bottom:3%;
+            padding:auto;
+            margin:0;
+            float:right;
+            height:75%;
+            width: 49%;
+            overflow-x:hidden;
+        }
+
+        .m_write, .m_list{
+            margin:0;
+            padding:0;
+        }
+
+        .s_write, .s_list{
+            margin:0;
+            padding:0;
+        }
+
+        div, h3, table{
+            text-align: left;
+            padding-left:2%;
+        }
+        
+        #weather{
+            position:absolute;
+            top:33%; right:14.5%;
+            z-index:3;
+        }
+        .weather{
+            position:absolute;
+            top:28%; right:14.5%;
+            z-index:3;
+            font-weight:bold;
+        }
+        #url {
+            clear:none;
+            border:0px none;
+            float:none;
+            background-color:transparent;
+            color:white;
+        }
+
+        #ShareUrl
+        {
+            clear:none;
+            border:0px none;
+            float:none;
+            background-color:transparent;
+            color:white;
+        }
+        
+        .button{
+            text-align: center;
+        }    
+    </style>
+    <script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
+
+</head>
+
+<body>
+
+    {% load static %}
+    <p><link rel="stylesheet" type="text/css" href="{% static 'style.css' %}"></p>
+    <img style="height:30%; width:100%;" src="{% static '기차.png' %}">
+            <a style="font-weight:bold; margin-left:2%; font-size:large;">{{plan.departDate}}</a>
+            <a style="float:right; font-weight:bold; margin-right:2%; font-size:large;">{{plan.arriveDate}}&nbsp;</a>
+
+            <div class="body_margin">            
+            <script>
+                var apiURI = "http://api.openweathermap.org/data/2.5/weather?q=Busan&appid=70581ff7823060bfed79dd63f426210b";
+                    $.ajax({
+                        url: apiURI,
+                        dataType: "json",
+                        type: "GET",
+                        async: "false",
+                        success: function(resp) {
+                            var display="";
+                            temp = resp.main.temp- 273.15
+                            humidity = resp.main.humidity
+                            weather = resp.weather[0].main
+                            description = resp.weather[0].description
+                            icon = resp.weather[0].icon
+                            speed = resp.wind.speed
+                            cloud = resp.clouds.all
+                            country = resp.sys.country
+                            city = resp.name
+                            document.getElementById("weather").innerHTML = "도시이름  : "+ city + "<br>" +
+                            "현재온도: " + temp +"도"+ "<br>" + 
+                            "현재습도 : "+ humidity + "%" + "<br>" +
+                            "날씨 : "+ weather + "<br>" ;                
+                        }
+                    })
+            
+            </script>
+            <h5 class="weather">현재 날씨 <i class="fas fa-sun"></i></h5>
+            <div id="weather"></div>
+
+            <hr>
+
+<div id="mapframe">  <!--지도 영역-->
+
+<div class="map_wrap">
+    <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+    <p>
+        <input type="checkbox" id="chkUseDistrict" onclick="setOverlayMapTypeId()" /> 지적편집도 정보 보기
+        <input type="checkbox" id="chkTerrain" onclick="setOverlayMapTypeId()" /> 지형정보 보기 
+        <input type="checkbox" id="chkTraffic" onclick="setOverlayMapTypeId()" /> 교통정보 보기       
+        <input type="checkbox" id="chkBicycle" onclick="setOverlayMapTypeId()" /> 자전거도로 정보 보기
+    </p>
+
+    <div id="menu_wrap" class="bg_white">
+        <div class="option">
+            <div>
+                <form id="map_form"onsubmit="searchPlaces(); return false;">
+                    키워드 : <input type="text" value="{{plan.hotel}}" id="keyword" size="15"> 
+                    <button type="submit">검색하기</button> 
+                </form>
+            </div>
+        </div>
+        <hr>
+        <ul id="placesList"></ul>
+        <div id="pagination"></div>
+    </div>
+</div>
+
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=54a69dce5a421436dd865749ab8aa7a2&libraries=services,drawing"></script>
+
+<script>
+// 마커를 담을 배열입니다
+var markers = [];
+
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = {
+        center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
+        level: 3 // 지도의 확대 레벨
+    };  
+
+// 지도를 생성합니다    
+var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+// 장소 검색 객체를 생성합니다
+var ps = new kakao.maps.services.Places();  
+
+// 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
+var infowindow = new kakao.maps.InfoWindow({zIndex:1});
+
+// 키워드로 장소를 검색합니다
+searchPlaces();
+
+// 키워드 검색을 요청하는 함수입니다
+function searchPlaces() {
+
+    var keyword = document.getElementById('keyword').value;
+
+    if (!keyword.replace(/^\s+|\s+$/g, '')) {
+        alert('키워드를 입력해주세요!');
+        return false;
+    }
+
+    // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
+    ps.keywordSearch( keyword, placesSearchCB); 
+}
+
+// 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
+function placesSearchCB(data, status, pagination) {
+    if (status === kakao.maps.services.Status.OK) {
+
+        // 정상적으로 검색이 완료됐으면
+        // 검색 목록과 마커를 표출합니다
+        displayPlaces(data);
+
+        // 페이지 번호를 표출합니다
+        displayPagination(pagination);
+
+    } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+
+        alert('검색 결과가 존재하지 않습니다.');
+        return;
+
+    } else if (status === kakao.maps.services.Status.ERROR) {
+
+        alert('검색 결과 중 오류가 발생했습니다.');
+        return;
+
+    }
+}
+
+// 검색 결과 목록과 마커를 표출하는 함수입니다
+function displayPlaces(places) {
+
+    var listEl = document.getElementById('placesList'), 
+    menuEl = document.getElementById('menu_wrap'),
+    fragment = document.createDocumentFragment(), 
+    bounds = new kakao.maps.LatLngBounds(), 
+    listStr = '';
+    
+    // 검색 결과 목록에 추가된 항목들을 제거합니다
+    removeAllChildNods(listEl);
+
+    // 지도에 표시되고 있는 마커를 제거합니다
+    removeMarker();
+    
+    for ( var i=0; i<places.length; i++ ) {
+
+        // 마커를 생성하고 지도에 표시합니다
+        var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
+            marker = addMarker(placePosition, i), 
+            itemEl = getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
+
+        // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
+        // LatLngBounds 객체에 좌표를 추가합니다
+        bounds.extend(placePosition);
+
+        // 마커와 검색결과 항목에 mouseover 했을때
+        // 해당 장소에 인포윈도우에 장소명을 표시합니다
+        // mouseout 했을 때는 인포윈도우를 닫습니다
+        (function(marker, title) {
+            kakao.maps.event.addListener(marker, 'mouseover', function() {
+                displayInfowindow(marker, title);
+            });
+
+            kakao.maps.event.addListener(marker, 'mouseout', function() {
+                infowindow.close();
+            });
+
+            itemEl.onmouseover =  function () {
+                displayInfowindow(marker, title);
+            };
+
+            itemEl.onmouseout =  function () {
+                infowindow.close();
+            };
+        })(marker, places[i].place_name);
+
+        fragment.appendChild(itemEl);
+    }
+
+    // 검색결과 항목들을 검색결과 목록 Elemnet에 추가합니다
+    listEl.appendChild(fragment);
+    menuEl.scrollTop = 0;
+
+    // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+    map.setBounds(bounds);
+}
+
+// 검색결과 항목을 Element로 반환하는 함수입니다
+function getListItem(index, places) {
+
+    var el = document.createElement('li'),
+    itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
+                '<div class="info">' +
+                '   <h5>' + places.place_name + '</h5>';
+
+    if (places.road_address_name) {
+        itemStr += '    <span>' + places.road_address_name + '</span>' +
+                    '   <span class="jibun gray">' +  places.address_name  + '</span>';
+    } else {
+        itemStr += '    <span>' +  places.address_name  + '</span>'; 
+    }
+                 
+      itemStr += '  <span class="tel">' + places.phone  + '</span>' +
+                '</div>';           
+
+    el.innerHTML = itemStr;
+    el.className = 'item';
+
+    return el;
+}
+
+// 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
+function addMarker(position, idx, title) {
+    var imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
+        imageSize = new kakao.maps.Size(36, 37),  // 마커 이미지의 크기
+        imgOptions =  {
+            spriteSize : new kakao.maps.Size(36, 691), // 스프라이트 이미지의 크기
+            spriteOrigin : new kakao.maps.Point(0, (idx*46)+10), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+            offset: new kakao.maps.Point(13, 37) // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+        },
+        markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imgOptions),
+            marker = new kakao.maps.Marker({
+            position: position, // 마커의 위치
+            image: markerImage 
+        });
+
+    marker.setMap(map); // 지도 위에 마커를 표출합니다
+    markers.push(marker);  // 배열에 생성된 마커를 추가합니다
+
+    return marker;
+}
+
+// 지도 위에 표시되고 있는 마커를 모두 제거합니다
+function removeMarker() {
+    for ( var i = 0; i < markers.length; i++ ) {
+        markers[i].setMap(null);
+    }   
+    markers = [];
+}
+
+// 검색결과 목록 하단에 페이지번호를 표시는 함수입니다
+function displayPagination(pagination) {
+    var paginationEl = document.getElementById('pagination'),
+        fragment = document.createDocumentFragment(),
+        i; 
+
+    // 기존에 추가된 페이지번호를 삭제합니다
+    while (paginationEl.hasChildNodes()) {
+        paginationEl.removeChild (paginationEl.lastChild);
+    }
+
+    for (i=1; i<=pagination.last; i++) {
+        var el = document.createElement('a');
+        el.href = "#";
+        el.innerHTML = i;
+
+        if (i===pagination.current) {
+            el.className = 'on';
+        } else {
+            el.onclick = (function(i) {
+                return function() {
+                    pagination.gotoPage(i);
+                }
+            })(i);
+        }
+
+        fragment.appendChild(el);
+    }
+    paginationEl.appendChild(fragment);
+}
+
+// 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
+// 인포윈도우에 장소명을 표시합니다
+function displayInfowindow(marker, title) {
+    var content = '<div style="padding:5px;z-index:1;">' + title + '</div>';
+
+    infowindow.setContent(content);
+    infowindow.open(map, marker);
+}
+
+ // 검색결과 목록의 자식 Element를 제거하는 함수입니다
+function removeAllChildNods(el) {   
+    while (el.hasChildNodes()) {
+        el.removeChild (el.lastChild);
+    }
+}
+
+
+//선의 거리 계산하기
+var drawingFlag = false; // 선이 그려지고 있는 상태를 가지고 있을 변수입니다
+var moveLine; // 선이 그려지고 있을때 마우스 움직임에 따라 그려질 선 객체 입니다
+var clickLine // 마우스로 클릭한 좌표로 그려질 선 객체입니다
+var distanceOverlay; // 선의 거리정보를 표시할 커스텀오버레이 입니다
+var dots = {}; // 선이 그려지고 있을때 클릭할 때마다 클릭 지점과 거리를 표시하는 커스텀 오버레이 배열입니다.
+
+// 지도에 클릭 이벤트를 등록합니다
+// 지도를 클릭하면 선 그리기가 시작됩니다 그려진 선이 있으면 지우고 다시 그립니다
+kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+
+    // 마우스로 클릭한 위치입니다 
+    var clickPosition = mouseEvent.latLng;
+
+    // 지도 클릭이벤트가 발생했는데 선을 그리고있는 상태가 아니면
+    if (!drawingFlag) {
+
+        // 상태를 true로, 선이 그리고있는 상태로 변경합니다
+        drawingFlag = true;
+        
+        // 지도 위에 선이 표시되고 있다면 지도에서 제거합니다
+        deleteClickLine();
+        
+        // 지도 위에 커스텀오버레이가 표시되고 있다면 지도에서 제거합니다
+        deleteDistnce();
+
+        // 지도 위에 선을 그리기 위해 클릭한 지점과 해당 지점의 거리정보가 표시되고 있다면 지도에서 제거합니다
+        deleteCircleDot();
+    
+        // 클릭한 위치를 기준으로 선을 생성하고 지도위에 표시합니다
+        clickLine = new kakao.maps.Polyline({
+            map: map, // 선을 표시할 지도입니다 
+            path: [clickPosition], // 선을 구성하는 좌표 배열입니다 클릭한 위치를 넣어줍니다
+            strokeWeight: 3, // 선의 두께입니다 
+            strokeColor: '#db4040', // 선의 색깔입니다
+            strokeOpacity: 1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+            strokeStyle: 'solid' // 선의 스타일입니다
+        });
+        
+        // 선이 그려지고 있을 때 마우스 움직임에 따라 선이 그려질 위치를 표시할 선을 생성합니다
+        moveLine = new kakao.maps.Polyline({
+            strokeWeight: 3, // 선의 두께입니다 
+            strokeColor: '#db4040', // 선의 색깔입니다
+            strokeOpacity: 0.5, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+            strokeStyle: 'solid' // 선의 스타일입니다    
+        });
+    
+        // 클릭한 지점에 대한 정보를 지도에 표시합니다
+        displayCircleDot(clickPosition, 0);
+
+            
+    } else { // 선이 그려지고 있는 상태이면
+
+        // 그려지고 있는 선의 좌표 배열을 얻어옵니다
+        var path = clickLine.getPath();
+
+        // 좌표 배열에 클릭한 위치를 추가합니다
+        path.push(clickPosition);
+        
+        // 다시 선에 좌표 배열을 설정하여 클릭 위치까지 선을 그리도록 설정합니다
+        clickLine.setPath(path);
+
+        var distance = Math.round(clickLine.getLength());
+        displayCircleDot(clickPosition, distance);
+    }
+});
+    
+// 지도에 마우스무브 이벤트를 등록합니다
+// 선을 그리고있는 상태에서 마우스무브 이벤트가 발생하면 그려질 선의 위치를 동적으로 보여주도록 합니다
+kakao.maps.event.addListener(map, 'mousemove', function (mouseEvent) {
+
+    // 지도 마우스무브 이벤트가 발생했는데 선을 그리고있는 상태이면
+    if (drawingFlag){
+        
+        // 마우스 커서의 현재 위치를 얻어옵니다 
+        var mousePosition = mouseEvent.latLng; 
+
+        // 마우스 클릭으로 그려진 선의 좌표 배열을 얻어옵니다
+        var path = clickLine.getPath();
+        
+        // 마우스 클릭으로 그려진 마지막 좌표와 마우스 커서 위치의 좌표로 선을 표시합니다
+        var movepath = [path[path.length-1], mousePosition];
+        moveLine.setPath(movepath);    
+        moveLine.setMap(map);
+        
+        var distance = Math.round(clickLine.getLength() + moveLine.getLength()), // 선의 총 거리를 계산합니다
+            content = '<div class="dotOverlay distanceInfo">총거리 <span class="number">' + distance + '</span>m</div>'; // 커스텀오버레이에 추가될 내용입니다
+        
+        // 거리정보를 지도에 표시합니다
+        showDistance(content, mousePosition);   
+    }             
+});                 
+
+// 지도에 마우스 오른쪽 클릭 이벤트를 등록합니다
+// 선을 그리고있는 상태에서 마우스 오른쪽 클릭 이벤트가 발생하면 선 그리기를 종료합니다
+kakao.maps.event.addListener(map, 'rightclick', function (mouseEvent) {
+
+    // 지도 오른쪽 클릭 이벤트가 발생했는데 선을 그리고있는 상태이면
+    if (drawingFlag) {
+        
+        // 마우스무브로 그려진 선은 지도에서 제거합니다
+        moveLine.setMap(null);
+        moveLine = null;  
+        
+        // 마우스 클릭으로 그린 선의 좌표 배열을 얻어옵니다
+        var path = clickLine.getPath();
+    
+        // 선을 구성하는 좌표의 개수가 2개 이상이면
+        if (path.length > 1) {
+
+            // 마지막 클릭 지점에 대한 거리 정보 커스텀 오버레이를 지웁니다
+            if (dots[dots.length-1].distance) {
+                dots[dots.length-1].distance.setMap(null);
+                dots[dots.length-1].distance = null;    
+            }
+
+            var distance = Math.round(clickLine.getLength()), // 선의 총 거리를 계산합니다
+                content = getTimeHTML(distance); // 커스텀오버레이에 추가될 내용입니다
+                
+            // 그려진 선의 거리정보를 지도에 표시합니다
+            showDistance(content, path[path.length-1]);  
+             
+        } else {
+
+            // 선을 구성하는 좌표의 개수가 1개 이하이면 
+            // 지도에 표시되고 있는 선과 정보들을 지도에서 제거합니다.
+            deleteClickLine();
+            deleteCircleDot(); 
+            deleteDistnce();
+
+        }
+        
+        // 상태를 false로, 그리지 않고 있는 상태로 변경합니다
+        drawingFlag = false;          
+    }  
+});    
+
+// 클릭으로 그려진 선을 지도에서 제거하는 함수입니다
+function deleteClickLine() {
+    if (clickLine) {
+        clickLine.setMap(null);    
+        clickLine = null;        
+    }
+}
+
+// 마우스 드래그로 그려지고 있는 선의 총거리 정보를 표시하거
+// 마우스 오른쪽 클릭으로 선 그리가 종료됐을 때 선의 정보를 표시하는 커스텀 오버레이를 생성하고 지도에 표시하는 함수입니다
+function showDistance(content, position) {
+    
+    if (distanceOverlay) { // 커스텀오버레이가 생성된 상태이면
+        
+        // 커스텀 오버레이의 위치와 표시할 내용을 설정합니다
+        distanceOverlay.setPosition(position);
+        distanceOverlay.setContent(content);
+        
+    } else { // 커스텀 오버레이가 생성되지 않은 상태이면
+        
+        // 커스텀 오버레이를 생성하고 지도에 표시합니다
+        distanceOverlay = new kakao.maps.CustomOverlay({
+            map: map, // 커스텀오버레이를 표시할 지도입니다
+            content: content,  // 커스텀오버레이에 표시할 내용입니다
+            position: position, // 커스텀오버레이를 표시할 위치입니다.
+            xAnchor: 0,
+            yAnchor: 0,
+            zIndex: 3  
+        });      
+    }
+}
+
+// 그려지고 있는 선의 총거리 정보와 
+// 선 그리가 종료됐을 때 선의 정보를 표시하는 커스텀 오버레이를 삭제하는 함수입니다
+function deleteDistnce () {
+    if (distanceOverlay) {
+        distanceOverlay.setMap(null);
+        distanceOverlay = null;
+    }
+}
+
+// 선이 그려지고 있는 상태일 때 지도를 클릭하면 호출하여 
+// 클릭 지점에 대한 정보 (동그라미와 클릭 지점까지의 총거리)를 표출하는 함수입니다
+function displayCircleDot(position, distance) {
+
+    // 클릭 지점을 표시할 빨간 동그라미 커스텀오버레이를 생성합니다
+    var circleOverlay = new kakao.maps.CustomOverlay({
+        content: '<span class="dot"></span>',
+        position: position,
+        zIndex: 1
+    });
+
+    // 지도에 표시합니다
+    circleOverlay.setMap(map);
+
+    if (distance > 0) {
+        // 클릭한 지점까지의 그려진 선의 총 거리를 표시할 커스텀 오버레이를 생성합니다
+        var distanceOverlay = new kakao.maps.CustomOverlay({
+            content: '<div class="dotOverlay">거리 <span class="number">' + distance + '</span>m</div>',
+            position: position,
+            yAnchor: 1,
+            zIndex: 2
+        });
+
+        // 지도에 표시합니다
+        distanceOverlay.setMap(map);
+    }
+
+    // 배열에 추가합니다
+    dots.push({circle:circleOverlay, distance: distanceOverlay});
+}
+
+// 클릭 지점에 대한 정보 (동그라미와 클릭 지점까지의 총거리)를 지도에서 모두 제거하는 함수입니다
+function deleteCircleDot() {
+    var i;
+
+    for ( i = 0; i < dots.length; i++ ){
+        if (dots[i].circle) { 
+            dots[i].circle.setMap(null);
+        }
+
+        if (dots[i].distance) {
+            dots[i].distance.setMap(null);
+        }
+    }
+
+    dots = [];
+}
+
+// 마우스 우클릭 하여 선 그리기가 종료됐을 때 호출하여 
+// 그려진 선의 총거리 정보와 거리에 대한 도보, 자전거 시간을 계산하여
+// HTML Content를 만들어 리턴하는 함수입니다
+function getTimeHTML(distance) {
+
+    // 도보의 시속은 평균 4km/h 이고 도보의 분속은 67m/min입니다
+    var walkkTime = distance / 67 | 0;
+    var walkHour = '', walkMin = '';
+
+    // 계산한 도보 시간이 60분 보다 크면 시간으로 표시합니다
+    if (walkkTime > 60) {
+        walkHour = '<span class="number">' + Math.floor(walkkTime / 60) + '</span>시간 '
+    }
+    walkMin = '<span class="number">' + walkkTime % 60 + '</span>분'
+
+    // 자전거의 평균 시속은 16km/h 이고 이것을 기준으로 자전거의 분속은 267m/min입니다
+    var bycicleTime = distance / 227 | 0;
+    var bycicleHour = '', bycicleMin = '';
+
+    // 계산한 자전거 시간이 60분 보다 크면 시간으로 표출합니다
+    if (bycicleTime > 60) {
+        bycicleHour = '<span class="number">' + Math.floor(bycicleTime / 60) + '</span>시간 '
+    }
+    bycicleMin = '<span class="number">' + bycicleTime % 60 + '</span>분'
+
+    // 거리와 도보 시간, 자전거 시간을 가지고 HTML Content를 만들어 리턴합니다
+    var content = '<ul class="dotOverlay distanceInfo">';
+    content += '    <li>';
+    content += '        <span class="label">총거리</span><span class="number">' + distance + '</span>m';
+    content += '    </li>';
+    content += '    <li>';
+    content += '        <span class="label">도보</span>' + walkHour + walkMin;
+    content += '    </li>';
+    content += '    <li>';
+    content += '        <span class="label">자전거</span>' + bycicleHour + bycicleMin;
+    content += '    </li>';
+    content += '</ul>'
+
+    return content;
+}
+
+
+// 일반 지도와 스카이뷰로 지도 타입을 전환할 수 있는 지도타입 컨트롤을 생성합니다
+var mapTypeControl = new kakao.maps.MapTypeControl();
+
+// 지도에 컨트롤을 추가해야 지도위에 표시됩니다
+// kakao.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOPRIGHT는 오른쪽 위를 의미합니다
+map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+
+// 지도 확대 축소를 제어할 수 있는  줌 컨트롤을 생성합니다
+var zoomControl = new kakao.maps.ZoomControl();
+map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+
+/////////////////////////////////////////
+
+// 지도 타입 정보를 가지고 있을 객체입니다
+// map.addOverlayMapTypeId 함수로 추가된 지도 타입은
+// 가장 나중에 추가된 지도 타입이 가장 앞에 표시됩니다
+// 이 예제에서는 지도 타입을 추가할 때 지적편집도, 지형정보, 교통정보, 자전거도로 정보 순으로 추가하므로
+// 자전거 도로 정보가 가장 앞에 표시됩니다
+var mapTypes = {
+    terrain : kakao.maps.MapTypeId.TERRAIN,    
+    traffic :  kakao.maps.MapTypeId.TRAFFIC,
+    bicycle : kakao.maps.MapTypeId.BICYCLE,
+    useDistrict : kakao.maps.MapTypeId.USE_DISTRICT
+};
+
+// 체크 박스를 선택하면 호출되는 함수입니다
+function setOverlayMapTypeId() {
+    var chkTerrain = document.getElementById('chkTerrain'),  
+        chkTraffic = document.getElementById('chkTraffic'),
+        chkBicycle = document.getElementById('chkBicycle'),
+        chkUseDistrict = document.getElementById('chkUseDistrict');
+    
+    // 지도 타입을 제거합니다
+    for (var type in mapTypes) {
+        map.removeOverlayMapTypeId(mapTypes[type]);    
+    }
+
+    // 지적편집도정보 체크박스가 체크되어있으면 지도에 지적편집도정보 지도타입을 추가합니다
+    if (chkUseDistrict.checked) {
+        map.addOverlayMapTypeId(mapTypes.useDistrict);    
+    }
+    
+    // 지형정보 체크박스가 체크되어있으면 지도에 지형정보 지도타입을 추가합니다
+    if (chkTerrain.checked) {
+        map.addOverlayMapTypeId(mapTypes.terrain);    
+    }
+    
+    // 교통정보 체크박스가 체크되어있으면 지도에 교통정보 지도타입을 추가합니다
+    if (chkTraffic.checked) {
+        map.addOverlayMapTypeId(mapTypes.traffic);    
+    }
+    
+    // 자전거도로정보 체크박스가 체크되어있으면 지도에 자전거도로정보 지도타입을 추가합니다
+    if (chkBicycle.checked) {
+        map.addOverlayMapTypeId(mapTypes.bicycle);    
+    }
+    
+}  
+
+
+var options = { // Drawing Manager를 생성할 때 사용할 옵션입니다
+    map: map, // Drawing Manager로 그리기 요소를 그릴 map 객체입니다
+    drawingMode: [
+        kakao.maps.Drawing.OverlayType.MARKER,
+    ],
+    // 사용자에게 제공할 그리기 가이드 툴팁입니다
+    // 사용자에게 도형을 그릴때, 드래그할때, 수정할때 가이드 툴팁을 표시하도록 설정합니다
+    guideTooltip: ['draw', 'drag', 'edit'], 
+    markerOptions: {
+        draggable: true,
+        removable: true
+    },
+};
+
+// 위에 작성한 옵션으로 Drawing Manager를 생성합니다
+var manager = new kakao.maps.Drawing.DrawingManager(options);
+
+// Toolbox를 생성합니다. 
+// Toolbox 생성 시 위에서 생성한 DrawingManager 객체를 설정합니다.
+// DrawingManager 객체를 꼭 설정해야만 그리기 모드와 매니저의 상태를 툴박스에 설정할 수 있습니다.
+var toolbox = new kakao.maps.Drawing.Toolbox({drawingManager: manager});
+
+// 지도 위에 Toolbox를 표시합니다
+// kakao.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOP은 위 가운데를 의미합니다.
+map.addControl(toolbox.getElement(), kakao.maps.ControlPosition.TOP);
+
+
+</script>
+</div>
+<!--지도 끝-->
+
+<br><br><br>
+<!--스케줄-->
+        {% csrf_token %}
+        {% csrf_token %}
+<div class="s" style="overflow-x:hidden; width:49%; height:152%;">
+    <div class="s_write">
+    <br><h4>스케줄&nbsp<i class="fas fa-calendar-alt"></i></h4>
+    <a href="{% url 'schedulecreate' plan.id %}"><img src="{% static '스케줄 작성 버튼.png' %}"width=15% ></a>
+    <form method='POST'>
+        {% csrf_token %}
+        <div><table>
+            {{ form_s.as_table }}
+        </table></div>
+        <input type="image" src="{% static '스케줄 버튼.png' %}" width="15%" name="Submit" value="Submit">
+    </form>
+    <br>
+    <div class="s_list">
+        <h4>스케줄 목록&nbsp<i class="fas fa-list"></i></h4>
+            <form method='POST'>
+                {% csrf_token %}
+                {{ schedule_form }}
+            </form>    
+            {% for schedule in plan.schedule_set.all %}
+                {{ schedule.date }}
+                {{ schedule.time }}
+                {{ schedule.schedule }}
+                <a href="{% url 'scheduleupdate' schedule.id %}">[수정]</a>
+                <a href="{% url 'scheduledelete' schedule.id %}">[삭제]</a>
+                <br/>
+            {% endfor %}
+        </div>
+    <br>
+    </div>        
+</div>
+
+<!--메모-->
+<div class = "m">
+    <div class="m_write">
+    <br><h4>메모&nbsp<i class="fas fa-sticky-note"></i></h4>
+    <a href="{% url 'memocreate' plan.id %}"><img src="{% static '메모 작성 버튼.png' %}"width=15% ></a><br>
+     <form method='POST'>
+        {% csrf_token %}
+        <table>
+            {{ form.as_table }}
+            {{memo.content}}
+        </table>
+        <input type="image" width=15% src="{% static '메모 버튼.png' %}" name="Submit" value="Submit">
+    </form>
+    </div><br>
+    <div class = "m_list">
+        <h4>메모 목록&nbsp<i class="fas fa-list"></i></h4>
+        <div>
+            <a href=#none id="show" onclick="if(hide.style.display=='none') {hide.style.display='';show.innerText='▲접기'} else {hide.style.display='none';show.innerText='▶펼치기'}">▶펼치기</a>
+            <div id="hide" style="display: none">
+                <form method='POST'>
+                    {% csrf_token %}
+                    {{ form_memo }}
+                </form>    
+                {% for memo in plan.memo_set.all %}
+                    {{ memo.content }}
+                    <a href="{% url 'memoupdate' memo.id %}">[수정]</a>
+                    <a href="{% url 'memodelete' memo.id %}">[삭제]</a>
+                    <br/>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--계산기-->
+<div class="Cal">
+    <br><br>
+    <h4>여행경비 계산기&nbsp<i class="fas fa-calculator"></i></h4>
+    <table id="calc">
+      <tr>
+        <th></th>
+        <th><i class="fas fa-won-sign"></i>&nbsp금액</th>
+        <th><i class="fas fa-user"></i>&nbsp인원</th>
+        <th></i>&nbsp총액</th>
+      </tr>
+      <tr>
+        <td><i class="fas fa-plane">&nbsp</i>항공권</td>
+        <td><input class="t_input" type="text" id="price1" /> 원</td>
+        <td><input class="t_input" type="number" id="no1" value="1" /> 명</td>
+        <td><input class="t_input" type="number" id="t1" /> 원</td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-hotel"></i>&nbsp숙박비</td>
+        <td><input class="t_input" type="text" id="price2" /> 원</td>
+        <td><input class="t_input" type="number" id="no2" value="1" /> 명</td>
+        <td><input class="t_input" type="number" id="t2" /> 원</td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-utensils"></i>&nbsp식비</td>
+        <td><input class="t_input" type="text" id="price3" /> 원</td>
+        <td><input class="t_input" type="number" id="no3" value="1" /> 명</td>
+        <td><input class="t_input" type="number" id="t3" /> 원</td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-car"></i>&nbsp렌터카비</td>
+        <td><input class="t_input" type="text" id="price4" /> 원</td>
+        <td><input class="t_input" type="number" id="no4" value="1" /> 명</td>
+        <td><input class="t_input" type="number" id="t4" /> 원</td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-train"></i>&nbsp교통비</td>
+        <td><input class="t_input" type="text" id="price5" /> 원</td>
+        <td><input class="t_input" type="number" id="no5" value="1" /> 명</td>
+        <td><input class="t_input" type="number" id="t5" /> 원</td>
+      </tr>
+      <tr>
+        <td><i class="fas fa-ticket-alt"></i>&nbsp입장권비</td>
+        <td><input class="t_input" type="text" id="price6" /> 원</td>
+        <td><input class="t_input" type="number" id="no6" value="1" /> 명</td>
+        <td><input class="t_input" type="number" id="t6" /> 원</td>
+      </tr>
+      <tr>
+        <td>기타 비용</td>
+        <td><input class="t_input" type="text" id="price7" /> 원</td>
+        <td><input class="t_input" type="number" id="no7" value="1" /> 명</td>
+        <td><input class="t_input" type="number" id="t7" /> 원</td>
+      </tr>
+      <tr>
+        <td id="copy_tr" >합계</td>
+        <td id="copy_tr">&nbsp;</td>
+        <td id="copy_tr">&nbsp;</td>
+        <td id="copy_tr" ><input class="t_input" type="number" style="width:100px;" id="tT" /> 원</td>
+      </tr>
+    </table>
+
+
+  <br>
+    <input type="image" width=20% src="{% static '계산 버튼.png' %}" name="button" value="button" onclick="calcT()"/>
+    <script>
+      function calcT() {
+        price1 = document.getElementById("price1").value;
+        price2 = document.getElementById("price2").value;
+        price3 = document.getElementById("price3").value;
+        price4 = document.getElementById("price4").value;
+        price5 = document.getElementById("price5").value;
+        price6 = document.getElementById("price6").value;
+        price7 = document.getElementById("price7").value;
+        no1 = document.getElementById("no1").value;
+        no2 = document.getElementById("no2").value;
+        no3 = document.getElementById("no3").value;
+        no4 = document.getElementById("no4").value;
+        no5 = document.getElementById("no5").value;
+        no6 = document.getElementById("no6").value;
+        no7 = document.getElementById("no7").value;
+        var t1 = price1 / no1;
+        var t2 = price2 / no2;
+        var t3 = price3 / no3;
+        var t4 = price4 / no4;
+        var t5 = price5 / no5;
+        var t6 = price6 / no6;
+        var t7 = price7 / no7;
+        var tT = t1 + t2 + t3 + t4 + t5 + t6 + t7;
+        
+        document.getElementById("t1").value = t1;
+        document.getElementById("t2").value = t2;
+        document.getElementById("t3").value = t3;
+        document.getElementById("t4").value = t4;
+        document.getElementById("t5").value = t5;
+        document.getElementById("t6").value = t6;
+        document.getElementById("t7").value = t7;
+        document.getElementById("tT").value = tT;
+      }
+    </script>
+    <br>
+</div>
+<div></div>
+
+{% load disqus_tags %}
+
+{% disqus_show_comments %}
+<br><br>
+
+<!--네이버 링크 공유-->
+<script>
+    //url = 'http://127.0.0.1:8000'
+    //title = 'Touring';
+    function shareNaver(url, title) {
+        var encodeUrl = encodeURIComponent( url ); 
+        var encodeTitle = encodeURIComponent( title ); 
+        var link = StringTool.format( 'https://share.naver.com/web/shareView.nhn?url={0}&title={1}', encodeUrl, encodeTitle );
+        window.open( link, 'share', 'width=500, height=500' ); 
+        }
+    shareNaver( 'http://127.0.0.1:8000', 'Touring-Project');
+</script>
+
+<div class="button">
+<input type="button" class="btn btn-success btn-lg" width=15% onclick="javascript:CopyUrlToClipboard()" name="링크 복사하기" value="링크 복사하기">
+<a href="http://127.0.0.1:8000" onclick="javascript:window.open('http://share.naver.com/web/shareView.nhn?url='+encodeURIComponent(document.URL)+'&title'+
+encodeURIComponent(document.title), 'naversharedialog', 'menubar=no, toolbar=no, resizable=yes,scrollbars=yes,height=600, width=600');
+ return false;" target = "_blank" alt="Share on Naver">
+<input type="button" class="btn btn-success btn-lg" onclick="shareNaver()" name="네이버 공유하기" value="네이버 공유하기"/></a>
+</div>
+
+<!--링크 복사하는 기능-->
+<script>
+        function CopyUrlToClipboard() {
+            var obShareUrl = document.getElementById("ShareUrl");
+            obShareUrl.value = "127.0.0.1:8000";
+            obShareUrl.select();
+            document.execCommand("copy"); 
+            obShareUrl.blur();
+            alert("링크가 복사되었습니다!");
+            }
+</script>
+
+<br><input id="ShareUrl">
+<form id="myform">
+<input id="url" value="https://127.0.0.1:8000" style="outline-color:white"><br/>
+<br/>
+</form>
+
+
+<div class="button"><a href="{% url 'last' %}"><img src="{% static 'bye.png' %}" width="300"></a></div>
+
+<br><a href="#">back to top</a>
+
+</div>
+
+{% endblock %}
+</body>
+
+</html>

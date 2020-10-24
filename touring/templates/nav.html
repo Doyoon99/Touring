@@ -1,0 +1,92 @@
+{% load static %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+
+<head>
+    <title>Touring</title>
+    <meta charset="utf-8">
+    <style>
+    ul {
+        list-style: none;
+    }
+    nav{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: .25em;
+        height: 55px;
+        background-color : #f4D160;
+    }
+    nav ul{
+        flex: 1;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin: 0;
+    }
+    nav ul li {
+        padding:0;
+        margin:0;
+    }
+    nav ul li a{
+        padding: 1em;
+        font-size: flex;
+        align-items: flex-end;
+        color : #28527A;
+        border-bottom: 3px solid #28527A
+    }
+    nav ul li a:hover{
+        color: #ff6b6b;
+        border-bottom: 3px solid #ff6b6b;
+    }
+    #logo{display:block; margin:0px auto; margin-bottom:-20px;}
+
+    @font-face {
+            font-family: 'KyoboHand';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }      
+    body{font-family: "KyoboHand";}
+    footer{
+          text-align:right;
+          margin-right:30px;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+    
+</head>
+
+<body>
+    <link rel="stylesheet" type="text/css" href="{% static 'base.css' %}">
+
+<a href="{% url 'home' %}"><img id="logo" width="30%" src="{% static '로고.png' %}"></a>
+<br>
+
+<nav class = "touring_nav">
+    <ul class = "touring_menu">
+        <li><a href="{% url 'home' %}"><i class="fas fa-home"></i>&nbsp;Home</a></li>
+        <li><a href="{% url 'planList' %}"><i class="fas fa-bars"></i>&nbsp;List</a></li>
+        <li><a href="{% url 'scraplist' %}"><i class="fas fa-bookmark"></i>&nbsp;My Scrap</a></li>
+        <li><a href="{% url 'recommend' %}"><i class="fas fa-thumbs-up"></i>&nbsp;Recommend</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'account_logout' %}"><i class="fas fa-sign-out-alt"></i>&nbsp;Logout</a></li>
+        {% else %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        {% endif %}
+    </ul>
+</nav>
+
+
+{% block content %}
+
+{% endblock %}
+
+<footer>
+    <a href = "{% url 'info' %}">Touring Project Developer Info</a><br>
+    Copyright ⓒ Touring. All Rights Reserved.
+</footer>
+</body>

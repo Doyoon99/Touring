@@ -1,0 +1,260 @@
+{% extends 'nav.html' %}
+
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+
+{% block content %}
+<br>
+
+<!doctype html>
+<html>
+  <head>
+    <title>Touring</title>
+    <meta charset="utf-8">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/album/">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <style>
+       @font-face {
+            font-family: 'KyoboHand';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }        
+        body{font-family: "KyoboHand";} 
+        #carouselExampleIndicators{
+          margin-left:3%;
+          margin-right:3%;
+        }
+        .copyright{
+          text-align:right;
+          margin-right:3%;
+        }
+    </style>
+  </head>
+
+<body>
+  <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+      <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+      <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+      <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+      <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
+    </ol> 
+    <div class="carousel-inner">
+      <span class="carousel-item active">
+        <img class="d-block w-100" height='100%' src="{% static '광안리2test.jpg' %}" alt="First slide">
+      </span>
+      <span class="carousel-item">
+        <img class="d-block w-100" height='100%' src="{% static '바다2.jpg' %}" alt="Second slide">
+      </span>
+      <span class="carousel-item">
+        <img class="d-block w-100" height='100%' src="{% static '1111.jpg' %}" alt="Third slide">
+      </span>
+      <span class="carousel-item">
+        <img class="d-block w-100" height='100%' src="{% static '수국꽃2.jpg' %}" alt="Third slide">
+      </span>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+</div>
+<div class="copyright">Copyright ⓒ부산광역시</div>
+<script>
+
+// 클립보드로 복사하는 기능을 생성
+function copyToClipboard(elementId) {
+
+  // 글을 쓸 수 있는 란을 만든다.
+  var aux = document.createElement("input");
+
+  // 지정된 요소의 값을 할당 한다.
+  aux.setAttribute("value", document.getElementById(elementId).innerHTML);
+
+  // bdy에 추가한다.
+  document.body.appendChild(aux);
+
+  // 지정된 내용을 강조한다.
+  aux.select();
+
+  // 텍스트를 카피 하는 변수를 생성
+  document.execCommand("copy");
+
+  // body 로 부터 다시 반환 한다.
+  document.body.removeChild(aux);
+
+  alert("주소가 복사되었습니다!")
+
+}
+</script>
+    
+    <main role="main">
+
+      <section class="jumbotron text-center">
+        <div class="container"></div>
+          <h1 class="jumbotron-heading">여행지를 선택해주세요!</h1>
+          <a href=#seoul><img class="button" width="30%" src="{% static '서울.png' %}"></a>
+          <a href=#busan><img class="button" width="30%" src="{% static '부산.png' %}"></a>
+          <a href=#yeosu><img class="button" width="30%" src="{% static '여수.png' %}"></a>
+        </div>
+      </section>
+
+      <div class="album py-5 bg-light">
+        <div class="container">
+          <a id=busan></a>
+          <h2><i class="fas fa-anchor"></i>&nbsp부산</h2>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="{% static 'skywalk.png' %}" style="height:210px" alt="Card image cap">
+                <div class="card-body" style="overflow-x:hidden; height:300px;" >
+                  <p class="card-text" ><strong>오륙도 스카이워크</strong><br>오륙도 스카이워크는 오륙도 승두말에 위치해 있으며 바다 쪽으로 9m 나갔다가 돌아오는 U자형 강판유리로 제작되었어요. 실제로 걸어보면 발 아래로 30m 절벽과 바다가 보여 짜릿함을 느낄 수 있답니다. “하늘위를 걷는다”는 의미를 담아 “오륙도 스카이워크”라고 이름을 지었다고 해요.</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button onclick="copyToClipboard('text1')">Copy</button>                   
+                    </div>
+                    <small class="text-muted"><p id="text1">부산 남구 용호동 산196-1번지, 산202번지</p></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="{% static 'gwangan.jpg' %}" style="height:210px" alt="Card image cap">
+                <div class="card-body" style="overflow-x:hidden; height:300px;">
+                  <p class="card-text"><strong>광안리 해수욕장</strong><br>밤이 되면 광안 대교의 아름다운 야경이 장관이죠. 해수욕장 주변에는 낭만이 깃든 카페거리와 300여 곳의 횟집이 있고 야외무대가 설치되어 있어서 부산 바다축제를 비롯한 다양한 축제를 즐길 수 있어요. 인근의 강에서는 낚시를 할 수도 있고, 싱싱한 회를 즉석에서 맛볼 수도 있으며 올림픽요트 경기장이 있어서 요트를 탈 수도 있다고 하네요!</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button onclick="copyToClipboard('text2')">Copy</button>
+                    </div>
+                    <small class="text-muted"><p id="text2">부산 수영구 광안해변로 219</p></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="{% static 'dongbaek.jpg' %}" style="height:210px" alt="Card image cap">
+                <div class="card-body" style="overflow-x:hidden; height:300px;">
+                  <p class="card-text"><strong>동백섬</strong><br>원래는 섬이었던 이곳은 오랜 세월 퇴적작용으로 육지와 연결되었지만 아직도 동백섬이라고 부르고 있어 옛날 지형을 연상시켜 주고 있어요. 또한 동백섬에서 보는 부산의 근원경은 인상적인데 건너편 미포쪽 해안끝선과 달맞이 언덕, 바다와 하늘을 가로지르는 광안대교, 부산바다의 상징 오륙도 등이 한눈에 들어온다는 점이 특징이죠.</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button onclick="copyToClipboard('text3')">Copy</button>
+                    </div>
+                    <small class="text-muted"><p id="text3">부산 해운대구 동백로 23</p></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="{% static 'gamcheon.jpg' %}" style="height:210px" alt="Card image cap">
+                <div class="card-body" style="overflow-x:hidden; height:300px;">
+                  <p class="card-text"><strong>감천문화마을</strong><br>감천동 문화마을은 산자락 아래 계단식으로 형성된 집들이 한 폭의 그림처럼 형성되어 있어 "부산의 마추픽추"라고도 불려지고 있어요. 골목 곳곳에 조성된 지역예술가들의 조형작품과 다양한 영화 촬영장소로 마을 전체가 하나의 예술작품이자 관광지랍니다. 또한 도자기, 천연염색 체험프로그램, 아트센터 등을 운영하고 있어 보고 즐기는 체험관광지로 관광객들로부터 호응을 받고 있다고 해요.</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button onclick="copyToClipboard('text4')">Copy</button>
+                    </div>
+                    <small class="text-muted"><p id="text4">부산 사하구 감내2로 산복도로</p></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="{% static 'apec.jpg' %}" style="height:210px" alt="Card image cap">
+                <div class="card-body" style="overflow-x:hidden; height:300px;">
+                  <p class="card-text"><strong>누리마루 APEC하우스</strong><br>누리마루 APEC하우스는 2005년 APEC정상회의 이후 수준 높은 국제회의시설의 대명사가 되었고 지금도 하루에 4~5천명의 관광객이 찾아오는 부산의 대표적 관광명소로 자리 잡고 있어요! 세계의 정상이라는 뜻의 누리마루는 한국 고유의 건축인 정자를 본떠 만들었으며 건물 안으로 들어가면 정상회의 당시의 다양한 모습을 한눈에 살펴볼 수 있어요.</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button onclick="copyToClipboard('text5')">Copy</button>
+                    </div>
+                    <small class="text-muted"><p id="text5">부산 해운대구 동백로 116</p></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="{% static 'haeundae.jpg' %}" style="height:210px" alt="Card image cap">
+                <div class="card-body" style="overflow-x:hidden; height:300px;">
+                  <p class="card-text"><strong>해운대 해수욕장</strong><br>‘부산’ 하면 제일 먼저 떠올리는 곳이 해운대 해수욕장이라고 할 만큼 부산을 대표하는 명소이며,해마다 여름철 피서객의 규모를 가늠하는 척도로 이용될 만큼 국내 최대 인파가 몰리는 곳이기도 해요. 특히 해안선 주변에 크고 작은 빌딩들과 고급 호텔들이 우뚝 솟아 있어 현대적이고 세련된 분위기의 해수욕장으로 유명하기 때문에 여름 휴가철 뿐 만 아니라 항상 젊은 열기로 붐비고 해외 관광객들에게도 잘 알려져 있어 외국인들이 많이 찾는 곳이라는 것, 다 알고 계시죠?</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button onclick="copyToClipboard('text6')">Copy</button>
+                    </div>
+                    <small class="text-muted"><p id="text6">부산 해운대구 해운대해변로 264</p></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="{% static 'noodle.jpg' %}" style="height:210px" alt="Card image cap">
+                <div class="card-body" style="overflow-x:hidden; height:300px;"> 
+                  <p class="card-text"><strong>초량밀면</strong><br>부산역 건너에 위치한 밀면 전문점이에요. 대표 메뉴인 밀면과 함께 다진 채소와 고기로 가득 찬 왕만두가 인기 있지요. 살얼음이 떠 있는 육수는 한방약재를 넣고 달여 맛을 내며, 비빔 밀면에는 다진 땅콩을 뿌려 고소한 맛을 낸다고 하니 꼭 한 번 들려보세요!</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button onclick="copyToClipboard('text7')">Copy</button>
+                    </div>
+                    <small class="text-muted"><p id="text7">부산 동구 중앙대로 225</p></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="{% static 'thebay.jpg' %}" style="height:210px" alt="Card image cap">
+                <div class="card-body" style="overflow-x:hidden; height:300px;">
+                  <p class="card-text"><strong>더베이101</strong><br>요즘 부산에서 가장 관심을 모으는 음식점을 꼽는다면 단연 ‘더베이101’이죠! 동백섬 입구에 문을 연 이곳은 ‘야경과 음식이 멋진 명소’라는 입소문을 타면서 손님들로 북적이고 있어요. 부산에 문화와 예술을 위한 공간이 부족해 아쉬운 사람들을 위해 재미 있는 공간을 만들고자 생각하게 된 시설이라고 하네요.</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button onclick="copyToClipboard('text8')">Copy</button>
+                    </div>
+                    <small class="text-muted"><p id="text8">부산 해운대구 동백로 52 </p></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img class="card-img-top" src="{% static 'darizip.jfif' %}" style="height:210px" alt="Card image cap">
+                <div class="card-body" style="overflow-x:hidden; height:300px;">
+                  <p class="card-text"><strong>다리집</strong><br>수요미식회에도 나왔던 떡볶이집이에요. 다리집의 떡볶이는 긴 가래떡이 통째로 나온다는 점과 떡 외에 다른 야채나 어묵이 전혀 없다는 점에서 개성이 무척 강하다고 할 수 있죠. 직접 잘라서 먹어야 한다는 점이 불편하게 느껴질 수도 있지만, 불편함을 금방 잊을 만큼 맛있다고 하네요!</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button onclick="copyToClipboard('text9')">Copy</button>
+                    </div>
+                    <small class="text-muted"><p id="text9">부산 수영구 남천바다로10번길 70 101호</p></small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:large; text-align: center;"><a id="seoul"><a id="yeosu">다른 지역은 업데이트 예정입니다.</a></a></p>
+    </main>
+    
+  
+    <a href="#" style="text-align:left; margin-left:30px">back to top</a>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+  </body>
+</html>
+
+{% endblock %}

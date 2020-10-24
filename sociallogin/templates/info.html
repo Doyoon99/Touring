@@ -1,0 +1,147 @@
+
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+{% load static %}
+
+<head>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script> <!--fas-->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <title>Touring</title>
+    <style>
+         @font-face {
+            font-family: 'KyoboHand';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }        
+        body{font-family: "KyoboHand";}
+        #logo {display:block; margin:0px auto; margin-top:50px; margin-right:auto; margin-left:auto;}  
+        .imgBoxDiv1{
+            width: 300px;
+            height: 300px;
+            margin: auto;
+            text-align:center;
+            margin-left: 25%;
+            position: relative;
+            float: left;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 2px 2px 8px 0px #000;
+        }
+        .imgBoxDiv2{
+            width: 300px;
+            height: 300px;
+            margin: auto;
+            margin-right: 25%;
+            position: relative;
+            float: right;
+            text-align:center;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 2px 2px 8px 0px #000;
+        }
+        .imgBoxDiv3{
+            width: 300px;
+            height: 300px;
+            margin: auto;
+            text-align:center;
+            margin-left: 25%;
+            margin-top:3%;
+            position: relative;
+            float: left;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 2px 2px 8px 0px #000;
+        }
+        .imgBoxDiv4{
+            width: 300px;
+            height: 300px;
+            margin: auto;
+            text-align:center;
+            margin-right: 25%;
+            position: relative;
+            float: right;
+            margin-top:3%;
+            margin-bottom:10%;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 2px 2px 8px 0px #000;
+        }
+        .imgDiv{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            background: white;
+            z-index:1;
+            -webkit-transition:all.5s ease;
+            transition:all.5s ease;
+            bottom:0px;
+            overflow:hidden;
+        }
+        .imgBoxDiv1:hover .imgDiv{
+            bottom: 60px;
+        }
+        .imgBoxDiv2:hover .imgDiv{
+            bottom: 60px;
+        }
+        .imgBoxDiv3:hover .imgDiv{
+            bottom: 60px;
+        }
+        .imgBoxDiv4:hover .imgDiv{
+            bottom: 60px;
+        }
+        .imgDescDiv{
+            width: 100%;
+            height: 70px;
+            padding: 10px;
+            color: #ffffff;
+            background: #f4D160;
+            position:absolute;
+            bottom:0px;
+        }
+
+        .text{
+            margin:auto;
+            text-align:center;
+            font-size:x-large;
+            font-weight:bold;
+        }
+    </style>
+  </head>
+  <body>
+
+    <a href="{% url 'home' %}"><img id="logo" width="30%" src="{% static '로고.png' %}"></a>
+    <br><br><div class="text">Developers <br>Team 피포피포</div>
+    <br><br>
+    
+    <div class="box">
+    <div class="imgBoxDiv1">
+        <div class="imgDiv"><img width="300px" height="300px" src="{% static '윤서.jpg' %}"></div>
+        <div class="imgDescDiv"><a href="mailto:dbstj16@naver.com">dbstj16@naver.com</a><br>
+          <a class="f-link" target="_blank" href="https://www.instagram.com/ky._.y.s/"><i class="fab fa-instagram"></i></a> | <a class="f-link" target="_blank" href="https://www.facebook.com/profile.php?id=100008082074644"><i class="fab fa-facebook-square"></i></a><br></div>
+    </div>
+    <div class="imgBoxDiv2">
+        <div class="imgDiv"><img width="300px" height="300px" src="{% static '도윤.jpeg' %}"></div>
+        <div class="imgDescDiv"><a href="mailto:qkrehdbs1106@naver.com">qkrehdbs1106@naver.com</a><br>
+          <a class="f-link" target="_blank" href="https://www.instagram.com/doyoon_o3o4/"><i class="fab fa-instagram"></i></a> | <a class="f-link" target="_blank" href="https://www.facebook.com/profile.php?id=100008506201645"><i class="fab fa-facebook-square"></i></a><br></div>
+    </div>
+    <br>
+    <div class="imgBoxDiv3">
+        <div class="imgDiv"><img width="300px" height="300px" src="{% static '주연.jpg' %}"></div>
+        <div class="imgDescDiv"><a href="mailto:jooyeon926@naver.com">jooyeon926@naver.com</a><br>
+          <a class="f-link" target="_blank" href="https://www.instagram.com/jooyeon_0926/"><i class="fab fa-instagram"></i></a> | <a class="f-link" target="_blank" href="https://www.facebook.com/profile.php?id=100009494923953"><i class="fab fa-facebook-square"></i></a><br></div>
+    </div> 
+    <br>
+    <div class="imgBoxDiv4">
+        <div class="imgDiv"><img width="300px" height="300px" src="{% static '정인.jpg' %}"></div>
+        <div class="imgDescDiv"><a href="mailto:yoonjeongin@naver.com">yoonjeongin@naver.com</a><br>
+          <a class="f-link" target="_blank" href="https://www.instagram.com/j_nini99/"><i class="fab fa-instagram"></i></a> | <a class="f-link" target="_blank" href="https://www.facebook.com/jeongin307/"><i class="fab fa-facebook-square"></i></a><br></div>
+    </div> 
+    </div>
+
+  </body>
+  </html>

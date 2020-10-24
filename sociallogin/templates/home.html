@@ -1,0 +1,56 @@
+{% load static %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+<head>
+    <meta charset="utf-8">
+    <title>Touring</title>
+    <style>
+        @font-face {
+        font-family: 'UhBeeSe_hyun';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_five@.2.0/UhBeeSe_hyun.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+        }
+        body{ font-family:'UhBeeSe_hyun'; }    
+        .button{position:relative; margin-left:5%; margin-right:5%;}
+        #logo {display:block; margin:0px auto; margin-top:150px; margin-right:auto; margin-left:auto;}  
+        p{text-align:center;}
+        #user_login{text-align:right; margin-right:30px; margin-top:10px;}
+        #home{display:block; margin:auto; text-align:center;}
+    </style>
+</head>
+<body>
+<p id="user_login">
+    {% if user.is_authenticated %}
+    {{user.username}} 님이 로그인 중
+    {% else %}
+    {% endif %}</p>
+<a href="{% url 'home' %}"><img id="logo" width="50%" src="{% static '로고.png' %}"></a>
+<br>
+<br>
+<p>여행, 어디로 떠날지 고민이신가요 ?</p><br>
+<p>투어링과 함께라면 어디든 좋아요 !</p><br>
+<p></p>
+  
+<hr style="border: solid 10px #f4D160;"><br>
+
+<div id="home">
+<a href="{% url 'recommend' %}"><img class="button" width="18%" src="{% static 'recommend.jpg' %}"></a>
+</span>
+
+{% if user.is_authenticated %}
+
+<a href="{% url 'planList' %}"><img class="button" width="18%" src="{% static 'start.jpg' %}"></a>
+<a href="/accounts/logout"><img class="button" width="19%" src="{% static 'logout.jpg' %}"></a>
+{% else %}
+
+<a onclick="return alert('로그인을 해주세요.')"><img class="button" width="18%" src="{% static 'start.jpg' %}"></a>
+<a href="{% url 'login' %}"><img class="button" width="19%" src="{% static 'login.jpg' %}"></a> 
+</div>
+
+{% endif %}
+<br><br><br><br><br><br><br><br>
+
+
+</body>

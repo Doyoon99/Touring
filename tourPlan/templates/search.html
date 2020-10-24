@@ -1,0 +1,89 @@
+{% extends 'nav.html' %}
+
+{% load static %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+{% block content %}
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Touring</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+    <style>
+       @font-face {
+            font-family: 'KyoboHand';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }        
+        body{font-family: "KyoboHand";} 
+        .container{text-align:center;}
+        a.title{color: black;}
+        a.title:hover{color:black; }
+        .search{margin:auto; text-align:left;}
+        .body_margin{padding-left: 30px; padding-right: 30px;}
+
+    </style>
+</head>
+<body>
+<br>
+<div class="body_margin">
+<form class="search" action="{% url 'search' %}" method="get">
+    <input type="text" name="query" value="{{query}}">
+    <input type="submit" name="" value="검색">
+    <a href="{% url 'plancreate' %}"><input type="button" value="새로운 계획"></a>
+</form>
+
+<br>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope = "col">Title</th>
+            <th scope = "col">view</th>
+            <th scope = "col">Date</th>
+            <th scope = "col">Scrap</th>
+            <th scope = "col">Modify</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for plan in searches %}
+        <tr>
+            <td><a class="title" href="{% url 'map' plan.id %}">{{plan.title}}</a></td>
+            <td>{{plan.view_count}}</td>
+            <td>{{plan.created_at}}</td>
+            <td><a href="{% url 'map' plan.id %}" class = "btn btn-success btn-sm">수정</a></td>
+            <td>
+                {% if user in plan.scrap_users.all %}
+                <a href="{% url 'scrap' plan.id %}" class = "btn btn-success btn-sm">스크랩 취소</a>
+                {% else %}
+                <a href ="{% url 'scrap' plan.id %}" class = "btn btn-success btn-sm">스크랩</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="container">
+    {% if searches.has_previous %}
+    <a href="?page=1&&query={{ query }}">맨 앞으로</a>
+    <a href="?page={{searches.previous_page_number}}&&query={{ query }}">이전으로</a> <br>
+    {% endif %}
+    <span>{{searches.number}}</span>
+    <span>/</span>
+    <span>{{searches.paginator.num_pages}}</span> 
+    <br>
+    {% if searches.has_next %}
+    <a href="?page={{searches.next_page_number}}&&query={{ query }}">다음으로</a>
+    <a href="?page={{searches.paginator.num_pages}}&&query={{ query }}">맨 뒤로</a> 
+    {% endif %}
+</div>
+</div>
+{% endblock %}
+</body>
+
+
+</html>

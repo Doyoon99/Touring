@@ -1,0 +1,168 @@
+{% extends 'nav.html' %}
+
+{% load static %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+{% block content %}
+
+<head>
+    <meta charset='UTF-8'>
+    <title>Touring</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script src="{% static 'base.css' %}"></script>
+    <style>
+        @font-face {
+            font-family: 'KyoboHand'; 
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-size: 20pt;
+        }        
+        body{font-family: "KyoboHand";}
+        .body_margin{padding-left: 30px; padding-right: 30px;}
+        .container{text-align:center;}
+        a.title{color: black;}
+        a.title:hover{color:black; }
+        .search{margin: auto; text-align:center;}
+        .bar1{float:left;}
+        .bar2{float:right;}
+</style>
+</head>
+<body>
+    
+<br>
+<div class ="body_margin">
+<div class="bar">
+<div class="bar1">
+<form class="search" action="{% url 'search' %}" method="get">
+    <input type="text" name="query">
+    <input type="submit" name="" value="검색">
+    <a href="{% url 'plancreate' %}"><input type="button" value="새로운 계획"></a>
+</form>
+</div>
+<div class="bar2">
+<select id = "sort-select" onchange="location = this.value;">
+    <option class = "sort-writedate" value="?sort=writedate">작성순</option>
+    <option class = "sort-date" value="?sort=date">최신순</option>
+    <option class = "sort-scrap" value="?sort=scrap">스크랩순</option>
+    <option class = "sort-view" value="?sort=view">조회수순</option>
+</select>
+
+<script>
+var getUrlParameter = function getUrlParameter(sParam) {
+var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+    sURLVariables = sPageURL.split('&'),
+    sParameterName,
+    i;
+
+for (i = 0; i < sURLVariables.length; i++) {
+    sParameterName = sURLVariables[i].split('=');
+
+    if (sParameterName[0] === sParam) {
+        return sParameterName[1] === undefined ? true : sParameterName[1];
+    }
+}
+};
+$(document).ready(function(){
+  var sort = getUrlParameter('sort');
+  if(sort == 'writedate'){
+    $('.sort-writedate').prop('selected', 'selected')
+  }else if(sort == 'date'){
+    $('.sort-date').prop('selected', 'selected')
+  }else if (sort == 'view'){
+    $('.sort-view').prop('selected', 'selected')
+  }else if (sort == 'scrap'){
+    $('.sort-scrap').prop('selected', 'selected')
+  }
+});
+</script>
+</div>
+</div>
+<br><br>  
+<table class="table">
+    <thead>
+        <tr>
+            <th scope = "col">Title</th>
+            <th scope = "col">View</th>
+            <th style="text-align:center" scope = "col">Scrap Count</th>
+            <th scope = "col">Date</th>
+            <th scope = "col">Modify</th>
+            <th scope = "col">Scrap</th>
+            <th scope = "col">Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for plan in posts %}
+        <tr>
+            <td><a class="title" href="{% url 'map' plan.id %}">{{plan.title}}</a></td>
+            <td>{{plan.view_count}}</td>
+            <td style="text-align:center">{{plan.scrap_count}}</td>
+            <td>{{plan.created_at}}</td>
+            <td><a href="{% url 'map' plan.id %}" class = "btn btn-success btn-sm">수정</a></td>
+            <td>
+                {% if user in plan.scrap_users.all %}
+                <a href="{% url 'scrap' plan.id %}" class = "btn btn-success btn-sm">스크랩 취소</a>
+                {% else %}
+                <a href ="{% url 'scrap' plan.id %}" class = "btn btn-success btn-sm">스크랩</a>
+                {% endif %}
+            </td>
+            <td>
+                <a class = "btn btn-success btn-sm" style="color:white" onclick="pw()">삭제</a>
+                <script> 
+                    function pw(){
+                        var pass = prompt("게시물 비밀번호를 입력하세요.");
+                        password = "{{plan.password}}"
+                        if (pass == password){
+                            alert("게시물이 삭제되었습니다.")
+                            location.href="{% url 'plandelete' plan.id %}"
+                        }
+                        else
+                            alert("비밀번호가 틀렸습니다.")
+                        
+                    }
+                </script>
+                
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="container">
+    {% if posts.has_previous %}
+    <a href="?page=1">맨 앞으로</a>
+    <a href="?page={{posts.previous_page_number}}">이전으로</a> <br>
+    {% endif %}
+    <span>{{posts.number}}</span>
+    <span>/</span>
+    <span>{{posts.paginator.num_pages}}</span> 
+    <br>
+    {% if posts.has_next %}
+    <a href="?page={{posts.next_page_number}}">다음으로</a>
+    <a href="?page={{posts.paginator.num_pages}}">맨 뒤로</a> 
+    {% endif %}
+</div>
+</div>
+</div>
+</body>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="refresh" content="3.5;{% url 'home' %}">
+        <title>Touring</title>
+        <style>
+            #myProgress {
+            width: 40%;
+            background-color: #A2d1ff ;
+            margin:auto; text-align:center;
+            margin-top:50px;
+            }
+
+            #myBar {
+            width: 1%;
+            height: 30px;
+            background-color:#0069D2;
+            color:white;
+            text-align:center;
+            }
+         @font-face {
+            font-family: 'KyoboHand';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }        
+        body{font-family: "KyoboHand";}
+        h1{text-align:center;}
+        </style>
+    </head>
+    <body>
+        <script>
+            var i = 0;
+            window.onload = function move() {
+            if (i == 0) {
+                i = 1;
+                var elem = document.getElementById("myBar");
+                var width = 10;
+                var id = setInterval(frame, 30);
+                function frame() {
+                if (width >= 100) {
+                    clearInterval(id);
+                    i = 0;
+                } else {
+                    width++;
+                    elem.style.width = width + "%";
+                    elem.innerHTML = width + "%";
+                }
+                }
+            }
+            }
+        </script>
+        <br><br><br><br><br><br><br><br><br><br>
+        <h1>처음으로 돌아가는 중</h1>
+        <div onload="move()" id="myProgress">
+        <div id="myBar">10%</div>
+        </div>
+    </body>
+</html>
+
