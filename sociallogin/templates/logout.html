@@ -1,0 +1,80 @@
+<html>
+{% load static %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
+<head>
+  <style>
+    @font-face {
+        font-family: 'KyoboHand';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/KyoboHand.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+       }         
+    body{
+      text-align:center;
+      font-family: "KyoboHand";
+    }
+    ul {
+        list-style: none;
+    }
+    nav{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: .25em;
+        height: 55px;
+        background-color : #f4D160;
+    }
+    nav ul{
+        flex: 1;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin: 0;
+    }
+    nav ul li {
+        padding:0;
+        margin:0;
+    }
+    nav ul li a{
+        padding: 1em;
+        font-size: flex;
+        align-items: flex-end;
+        color : #28527A;
+        border-bottom: 3px solid #28527A
+    }
+    nav ul li a:hover{
+        color: #ff6b6b;
+        border-bottom: 3px solid #ff6b6b;
+    }
+    #logo {display:block; margin:0px auto; margin-top:150px;}  
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  </style>
+  <title> Touring </title>
+</head>
+  
+{% block content %}
+<body>
+  <link rel="stylesheet" type="text/css" href="{% static 'base.css' %}">
+
+<a href="{% url 'home' %}"><img id="logo" width="30%" src="{% static '로고.png' %}"></a>
+<br>
+
+<br><br>
+<h1>{% trans "" %}</h1>
+
+<p>{% trans '정말로 로그아웃 하시겠습니까?' %}</p>
+
+<form method="post" action="{% url 'account_' %}">
+  {% csrf_token %}
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+  {% endif %}
+  <br><br><input type="image" width='30%' src="{% static '로그아웃 버튼.PNG' %}" name="Submit" value="Submit">
+</form>
+</body>
+{% endblock %}
+</html>

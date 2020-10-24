@@ -77,13 +77,19 @@
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
 
 {% if user.is_authenticated %}
-<a href="/accounts/logout">로그아웃</a><br>
+<a href="logout.html"></a><br>
 {{user.username}} 님이 로그인 중
 
 {% else %}
 <br><br>
-<!--facebook--> 
 {%load socialaccount%}
+<!--google-->
+<a href ="{% provider_login_url 'google' %}">
+  <img id="social" src="{% static 'google.png' %}">
+  </a>
+  <br>
+  
+<!--facebook--> 
 <a href="https://www.facebook.com/v8.0/dialog/oauth?
 client_id={{ 339369053910508 }}&
 redirect_uri=http://localhost:8000{% provider_login_url 'facebook' %}"> 
@@ -94,11 +100,8 @@ redirect_uri=http://localhost:8000{% provider_login_url 'facebook' %}">
 <a href="{% provider_login_url 'naver' %}"><img id="social" src="{% static 'naver_login.png' %}"></a>
 <br>
 
-<!--google-->
-<a href ="{% provider_login_url 'google' %}">
-<img id="social" src="{% static 'google.png' %}">
-</a>
-<br>
+
+
 
 {% endif %}
 
